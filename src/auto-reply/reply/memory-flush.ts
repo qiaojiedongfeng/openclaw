@@ -10,6 +10,9 @@ import { SILENT_REPLY_TOKEN } from "../tokens.js";
 export const DEFAULT_MEMORY_FLUSH_SOFT_TOKENS = 4000;
 export const DEFAULT_MEMORY_FLUSH_FORCE_TRANSCRIPT_BYTES = 2 * 1024 * 1024;
 
+/*
+2026.3.11 我靠，竟然可以这样，直接用提示词来控制，这不就是skill.md吗？软件发展的也太快了吧
+*/
 export const DEFAULT_MEMORY_FLUSH_PROMPT = [
   "Pre-compaction memory flush.",
   "Store durable memories now (use memory/YYYY-MM-DD.md; create memory/ if needed).",
