@@ -53,6 +53,7 @@ export type EmbeddedPiSubscribeState = {
   emittedAssistantUpdate: boolean;
   lastStreamedReasoning?: string;
   lastBlockReplyText?: string;
+  reasoningStreamOpen: boolean;
   assistantMessageIndex: number;
   lastAssistantTextMessageIndex: number;
   lastAssistantTextNormalized?: string;
@@ -76,6 +77,7 @@ export type EmbeddedPiSubscribeState = {
   pendingMessagingTargets: Map<string, MessagingToolSend>;
   successfulCronAdds: number;
   pendingMessagingMediaUrls: Map<string, string[]>;
+  deterministicApprovalPromptSent: boolean;
   lastAssistant?: AgentMessage;
 };
 
@@ -132,7 +134,13 @@ export type EmbeddedPiSubscribeContext = {
  */
 export type ToolHandlerParams = Pick<
   SubscribeEmbeddedPiSessionParams,
-  "runId" | "onBlockReplyFlush" | "onAgentEvent" | "onToolResult"
+  | "runId"
+  | "onBlockReplyFlush"
+  | "onAgentEvent"
+  | "onToolResult"
+  | "sessionKey"
+  | "sessionId"
+  | "agentId"
 >;
 
 export type ToolHandlerState = Pick<
@@ -149,6 +157,7 @@ export type ToolHandlerState = Pick<
   | "messagingToolSentMediaUrls"
   | "messagingToolSentTargets"
   | "successfulCronAdds"
+  | "deterministicApprovalPromptSent"
 >;
 
 export type ToolHandlerContext = {

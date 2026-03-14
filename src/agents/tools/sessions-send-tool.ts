@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { Type } from "@sinclair/typebox";
-import { loadConfig } from "../../config/config.js";
+import { type OpenClawConfig, loadConfig } from "../../config/config.js";
 import { callGateway } from "../../gateway/call.js";
 import { normalizeAgentId, resolveAgentIdFromSessionKey } from "../../routing/session-key.js";
 import { SESSION_LABEL_MAX_LENGTH } from "../../sessions/session-label.js";
@@ -15,10 +15,10 @@ import {
   createSessionVisibilityGuard,
   createAgentToAgentPolicy,
   extractAssistantText,
-  isRequesterSpawnedSessionVisible,
   resolveEffectiveSessionToolsVisibility,
   resolveSessionReference,
   resolveSandboxedSessionToolContext,
+  resolveVisibleSessionReference,
   stripToolMessages,
 } from "./sessions-helpers.js";
 import { buildAgentToAgentMessageContext, resolvePingPongTurns } from "./sessions-send-helpers.js";
@@ -36,6 +36,7 @@ export function createSessionsSendTool(opts?: {
   agentSessionKey?: string;
   agentChannel?: GatewayMessageChannel;
   sandboxed?: boolean;
+  config?: OpenClawConfig;
 }): AnyAgentTool {
   return {
     label: "Session Send",
@@ -46,7 +47,7 @@ export function createSessionsSendTool(opts?: {
     execute: async (_toolCallId, args) => {
       const params = args as Record<string, unknown>;
       const message = readStringParam(params, "message", { required: true });
-      const cfg = loadConfig();
+      const cfg = opts?.config ?? loadConfig();
       const { mainKey, alias, effectiveRequesterKey, restrictToSpawned } =
         resolveSandboxedSessionToolContext({
           cfg,
@@ -171,25 +172,23 @@ export function createSessionsSendTool(opts?: {
           error: resolvedSession.error,
         });
       }
-      // Normalize sessionKey/sessionId input into a canonical session key.
-      const resolvedKey = resolvedSession.key;
-      const displayKey = resolvedSession.displayKey;
-      const resolvedViaSessionId = resolvedSession.resolvedViaSessionId;
-
-      if (restrictToSpawned && !resolvedViaSessionId && resolvedKey !== effectiveRequesterKey) {
-        const ok = await isRequesterSpawnedSessionVisible({
-          requesterSessionKey: effectiveRequesterKey,
-          targetSessionKey: resolvedKey,
+      const visibleSession = await resolveVisibleSessionReference({
+        resolvedSession,
+        requesterSessionKey: effectiveRequesterKey,
+        restrictToSpawned,
+        visibilitySessionKey: sessionKey,
+      });
+      if (!visibleSession.ok) {
+        return jsonResult({
+          runId: crypto.randomUUID(),
+          status: visibleSession.status,
+          error: visibleSession.error,
+          sessionKey: visibleSession.displayKey,
         });
-        if (!ok) {
-          return jsonResult({
-            runId: crypto.randomUUID(),
-            status: "forbidden",
-            error: `Session not visible from this sandboxed agent session: ${sessionKey}`,
-            sessionKey: displayKey,
-          });
-        }
       }
+      // Normalize sessionKey/sessionId input into a canonical session key.
+      const resolvedKey = visibleSession.key;
+      const displayKey = visibleSession.displayKey;
       const timeoutSeconds =
         typeof params.timeoutSeconds === "number" && Number.isFinite(params.timeoutSeconds)
           ? Math.max(0, Math.floor(params.timeoutSeconds))
