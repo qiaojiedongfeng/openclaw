@@ -177,10 +177,12 @@ def send_message(linkman, message_content):
 
         # 尝试寻找笑脸图标来定位输入框
         smile_images = [
-            current_dir / 'picture' / 'smile.png'
+            current_dir / 'picture' / 'smile.png',
+            current_dir / 'picture' / 'smile2.png'
         ]
         smile_images = [str(img) for img in smile_images if Path(img).exists()]
-        
+
+
         smile_location = None
         if smile_images:
             for img in smile_images:
@@ -203,7 +205,7 @@ def send_message(linkman, message_content):
         if smile_location:
             # 根据笑脸图标的位置加上偏移量，点击输入框
             input_x = smile_location.left + 30
-            input_y = smile_location.top + 50
+            input_y = smile_location.top + 70
             print(f"点击输入框位置: ({input_x}, {input_y})")
             pyautogui.click(input_x, input_y)
             time.sleep(0.5)
