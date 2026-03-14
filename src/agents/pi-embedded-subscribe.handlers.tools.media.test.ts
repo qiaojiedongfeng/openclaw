@@ -29,7 +29,7 @@ function createMockContext(overrides?: {
       messagingToolSentMediaUrls: [],
       messagingToolSentTargets: [],
     },
-    log: { debug: vi.fn(), warn: vi.fn() },
+    log: { debug: vi.fn(), info: vi.fn(), warn: vi.fn() },
     shouldEmitToolResult: vi.fn(() => false),
     shouldEmitToolOutput: vi.fn(() => overrides?.shouldEmitToolOutput ?? false),
     emitToolSummary: vi.fn(),

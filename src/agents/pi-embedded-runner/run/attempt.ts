@@ -934,6 +934,14 @@ export async function runEmbeddedAttempt(
         }
 
         log.debug(`embedded run prompt start: runId=${params.runId} sessionId=${params.sessionId}`);
+        // if (log.isEnabled("debug")) {
+        //   log.debug(
+        //     `[prompt-diag] system prompt (${systemPromptText?.length ?? 0} chars):\n${systemPromptText ?? "(empty)"}`,
+        //   );
+        //   log.debug(
+        //     `[prompt-diag] user prompt (${effectivePrompt.length} chars):\n${effectivePrompt}`,
+        //   );
+        // }
         cacheTrace?.recordStage("prompt:before", {
           prompt: effectivePrompt,
           messages: activeSession.messages,
