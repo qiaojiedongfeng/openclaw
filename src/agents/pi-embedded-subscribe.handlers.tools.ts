@@ -215,8 +215,10 @@ export async function handleToolExecutionStart(
 
   const meta = extendExecMeta(toolName, args, inferToolMetaFromArgs(toolName, args));
   ctx.state.toolMetaById.set(toolCallId, buildToolCallSummary(toolName, args, meta));
+  const argsStr = JSON.stringify(args) || '';
+  const argsSnippet = argsStr.length > 500 ? argsStr.substring(0, 500) + '...' : argsStr;
   ctx.log.debug(
-    `embedded run tool start: runId=${ctx.params.runId} tool=${toolName} toolCallId=${toolCallId}`,
+    `embedded run tool start: runId=${ctx.params.runId} tool=${toolName} toolCallId=${toolCallId} args=${argsSnippet}`,
   );
 
   const shouldEmitToolEvents = ctx.shouldEmitToolResult();
@@ -423,8 +425,10 @@ export async function handleToolExecutionEnd(
     },
   });
 
+  const resultStr = JSON.stringify(sanitizedResult) || '';
+  const resultSnippet = resultStr.length > 1000 ? resultStr.substring(0, 1000) + '...' : resultStr;
   ctx.log.debug(
-    `embedded run tool end: runId=${ctx.params.runId} tool=${toolName} toolCallId=${toolCallId}`,
+    `embedded run tool end: runId=${ctx.params.runId} tool=${toolName} toolCallId=${toolCallId} isError=${isToolError} result=${resultSnippet}`,
   );
 
   emitToolResultOutput({ ctx, toolName, meta, isToolError, result, sanitizedResult });
