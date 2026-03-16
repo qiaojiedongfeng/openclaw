@@ -10,7 +10,7 @@ current_dir = Path(__file__).parent
 
 
 def led_show_text(led_text):
-    print('来了',led_text)
+    print('Displaying:', led_text)
     # 初始化 Pygame
     pygame.init()
 
@@ -28,7 +28,7 @@ def led_show_text(led_text):
 
     # 加载字体文件（确保字体文件路径正确）
     try:
-        font = pygame.font.Font(current_dir / "msyh.ttc", 128)  # 使用支持中文的字体文件
+        font = pygame.font.Font("C:/Windows/Fonts/msyh.ttc", 128)  # 使用支持中文的字体文件
     except FileNotFoundError:
         print("字体文件未找到，请确保路径正确！")
         sys.exit()
