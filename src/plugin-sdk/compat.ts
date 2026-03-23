@@ -30,6 +30,7 @@ export {
   resolveDirectDmAuthorizationOutcome,
   resolveSenderCommandAuthorizationWithRuntime,
 } from "./command-auth.js";
+export { createTypingCallbacks } from "../channels/typing.js";
 
 export { createAccountStatusSink } from "./channel-lifecycle.js";
 export { createPluginRuntimeStore } from "./runtime-store.js";
