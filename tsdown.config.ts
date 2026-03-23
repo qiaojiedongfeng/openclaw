@@ -178,6 +178,10 @@ function buildCoreDistEntries(): Record<string, string> {
     "plugins/build-smoke-entry": "src/plugins/build-smoke-entry.ts",
     "plugins/runtime/index": "src/plugins/runtime/index.ts",
     "llm-slug-generator": "src/hooks/llm-slug-generator.ts",
+    // Legacy compat surface used by external plugins importing "openclaw/plugin-sdk".
+    // root-alias.cjs prefers this dist file; it must exist so all named exports
+    // (including resolvePreferredOpenClawTmpDir) are available to non-bundled plugins.
+    "plugin-sdk/compat": "src/plugin-sdk/compat.ts",
   };
 }
 

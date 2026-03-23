@@ -20,6 +20,16 @@ if (shouldWarnCompatImport) {
 export { emptyPluginConfigSchema } from "../plugins/config-schema.js";
 export { resolveControlCommandGate } from "../channels/command-gating.js";
 export { delegateCompactionToRuntime } from "../context-engine/delegate.js";
+export { resolvePreferredOpenClawTmpDir } from "../infra/tmp-openclaw-dir.js";
+export { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../routing/session-key.js";
+// Additional exports needed by external plugins (e.g. openclaw-weixin) using the
+// legacy monolithic "openclaw/plugin-sdk" import path via root-alias.cjs.
+export { withFileLock } from "./file-lock.js";
+export { stripMarkdown } from "../line/markdown-to-line.js";
+export {
+  resolveDirectDmAuthorizationOutcome,
+  resolveSenderCommandAuthorizationWithRuntime,
+} from "./command-auth.js";
 
 export { createAccountStatusSink } from "./channel-lifecycle.js";
 export { createPluginRuntimeStore } from "./runtime-store.js";
