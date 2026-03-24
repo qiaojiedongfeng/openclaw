@@ -28,7 +28,7 @@ export { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../routing/session-key.j
 // Additional exports needed by external plugins (e.g. openclaw-weixin) using the
 // legacy monolithic "openclaw/plugin-sdk" import path via root-alias.cjs.
 export { withFileLock } from "./file-lock.js";
-export { stripMarkdown } from "../line/markdown-to-line.js";
+// export { stripMarkdown } from "../line/markdown-to-line.js";
 export {
   resolveDirectDmAuthorizationOutcome,
   resolveSenderCommandAuthorizationWithRuntime,
