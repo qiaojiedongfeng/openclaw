@@ -93,7 +93,15 @@ function stagePluginRuntimeOverlay(sourceDir, targetDir) {
     }
 
     if (dirent.isSymbolicLink()) {
-      fs.symlinkSync(fs.readlinkSync(sourcePath), targetPath);
+      try {
+        fs.symlinkSync(fs.readlinkSync(sourcePath), targetPath);
+      } catch (err) {
+        if (err.code === "EPERM" && process.platform === "win32") {
+          fs.copyFileSync(sourcePath, targetPath);
+        } else {
+          throw err;
+        }
+      }
       continue;
     }
 
