@@ -22,6 +22,11 @@ const MEMORY_FLUSH_REQUIRED_HINTS = [
   MEMORY_FLUSH_READ_ONLY_HINT,
 ];
 
+
+
+/*
+2026.3.11 我靠，竟然可以这样，直接用提示词来控制，这不就是skill.md吗？软件发展的也太快了吧
+*/
 export const DEFAULT_MEMORY_FLUSH_PROMPT = [
   "Pre-compaction memory flush.",
   MEMORY_FLUSH_TARGET_HINT,

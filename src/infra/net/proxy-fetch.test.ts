@@ -51,12 +51,10 @@ vi.mock("undici", () => ({
   fetch: undiciFetch,
 }));
 
-import {
-  getProxyUrlFromFetch,
-  makeProxyFetch,
-  PROXY_FETCH_PROXY_URL,
-  resolveProxyFetchFromEnv,
-} from "./proxy-fetch.js";
+let getProxyUrlFromFetch: typeof import("./proxy-fetch.js").getProxyUrlFromFetch;
+let makeProxyFetch: typeof import("./proxy-fetch.js").makeProxyFetch;
+let PROXY_FETCH_PROXY_URL: typeof import("./proxy-fetch.js").PROXY_FETCH_PROXY_URL;
+let resolveProxyFetchFromEnv: typeof import("./proxy-fetch.js").resolveProxyFetchFromEnv;
 
 function clearProxyEnv(): void {
   for (const key of PROXY_ENV_KEYS) {
@@ -75,7 +73,12 @@ function restoreProxyEnv(): void {
 }
 
 describe("makeProxyFetch", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(async () => {
+    vi.resetModules();
+    vi.clearAllMocks();
+    ({ getProxyUrlFromFetch, makeProxyFetch, PROXY_FETCH_PROXY_URL, resolveProxyFetchFromEnv } =
+      await import("./proxy-fetch.js"));
+  });
 
   it("uses undici fetch with ProxyAgent dispatcher", async () => {
     const proxyUrl = "http://proxy.test:8080";
@@ -116,10 +119,13 @@ describe("getProxyUrlFromFetch", () => {
 
   it("returns undefined for plain fetch functions or blank metadata", () => {
     const plainFetch = vi.fn() as unknown as typeof fetch;
-    const blankMetadataFetch = vi.fn() as unknown as typeof fetch & {
-      [PROXY_FETCH_PROXY_URL]?: string;
-    };
-    blankMetadataFetch[PROXY_FETCH_PROXY_URL] = "   ";
+    const blankMetadataFetch = vi.fn() as unknown as typeof fetch;
+    Object.defineProperty(blankMetadataFetch, PROXY_FETCH_PROXY_URL, {
+      value: "   ",
+      enumerable: false,
+      configurable: true,
+      writable: true,
+    });
 
     expect(getProxyUrlFromFetch(plainFetch)).toBeUndefined();
     expect(getProxyUrlFromFetch(blankMetadataFetch)).toBeUndefined();
